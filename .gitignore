@@ -2,3 +2,4 @@
 *.pyo
 .idea
 app.db
+.DS_Store
