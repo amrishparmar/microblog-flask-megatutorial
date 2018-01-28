@@ -7,11 +7,6 @@ from app.forms import LoginForm, RegistrationForm, EditProfileForm
 from app.models import User
 
 
-@app.errorhandler(404)
-def page_not_found(e):
-    return render_template('404.html'), 404
-
-
 @app.before_request
 def before_request():
     if current_user.is_authenticated:
@@ -113,7 +108,7 @@ def user_profile(username):
 @app.route('/edit_profile', methods=['GET', 'POST'])
 @login_required
 def edit_profile():
-    form = EditProfileForm()
+    form = EditProfileForm(current_user.username)
     if form.validate_on_submit():
         current_user.username = form.username.data
         current_user.about_me = form.about_me.data
