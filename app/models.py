@@ -94,7 +94,7 @@ class User(UserMixin, db.Model):
         try:
             user_id = jwt.decode(token, current_app.config['SECRET_KEY'],
                                  algorithms=['HS256'])['reset_password']
-        except jwt.exceptions.DecodeError:
+        except (jwt.exceptions.DecodeError, jwt.exceptions.ExpiredSignatureError):
             return
 
         return User.query.get(user_id)
