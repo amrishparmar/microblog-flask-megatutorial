@@ -5,6 +5,8 @@ from app.email import send_email
 
 def send_password_reset_mail(user):
     token = user.get_reset_password_token()
-    send_email(_('[Microblog] Reset your password'), current_app.config['ADMINS'][0], [user.email],
-               render_template('email/reset_password.txt', user=user, token=token),
-               render_template('email/reset_password.html', user=user, token=token))
+    send_email(subject=_('[Microblog] Reset your password'),
+               sender=current_app.config['MAIL_SENDER'],
+               recipients=[user.email],
+               text_body=render_template('email/reset_password.txt', user=user, token=token),
+               html_body=render_template('email/reset_password.html', user=user, token=token))
