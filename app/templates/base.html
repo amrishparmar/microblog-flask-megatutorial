@@ -78,10 +78,54 @@
                 source_lang: sourceLang,
                 target_lang: targetLang
             }).done(function (response) {
-                $(targetElem).text(response['text'])
+                $(targetElem).text(response['text']);
             }).fail(function () {
-                $(targetElem).text('{{ _("Error: Could not connect to translation service.") }}')
-            })
+                $(targetElem).text('{{ _("Error: Could not connect to translation service.") }}');
+            });
         }
+
+        $(function () {
+            var timer = null;
+            var xhr = null;
+            $('.user_popup').hover(
+                function (e) {
+                    // mouse in event handler
+                    var $elem = $(e.currentTarget);
+                    timer = setTimeout(function () {
+                        timer = null;
+                        xhr = $.ajax('/user/' + $elem.first().text().trim() + '/popup').done(
+                            function (data) {
+                                xhr = null;
+                                // create and display popup here
+                                $elem.popover({
+                                    trigger: 'manual',
+                                    html: true,
+                                    animation: false,
+                                    container: $elem,
+                                    content: data
+                                }).popover('show');
+                                flask_moment_render_all();
+                            }
+                        );
+                    }, 1000);
+                },
+                function (e) {
+                    // mouse out event handler
+                    var $elem = $(e.currentTarget);
+                    if (timer) {
+                        clearTimeout(timer);
+                        timer = null;
+                    }
+                    else if (xhr) {
+                        xhr.abort();
+                        xhr = null;
+                    }
+                    else {
+                        // destroy popup here
+                        $elem.popover('destroy');
+                    }
+                }
+            );
+        });
     </script>
 {% endblock %}
